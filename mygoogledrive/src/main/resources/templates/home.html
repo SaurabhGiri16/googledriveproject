@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Home</title>
+    <style>
+
+    #navigation {
+      background-color: #f2f2f2;
+      width: 200px;
+      height: 100vh;
+      position: fixed;
+      top: 0;
+      left: 0;
+      padding: 20px;
+    }
+    #navigation-right {
+      background-color: #f2f2f2;
+      width: 30px;
+      height: 100vh;
+      position: fixed;
+      top: 0;
+      left: 0;
+      padding: 20px;
+      margin: 0px 0px 0px 96%;
+    }
+
+    #navigation ul {
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    #navigation ul li {
+      margin-bottom: 10px;
+    }
+
+    #navigation ul li a {
+      text-decoration: none;
+      color: #333;
+    }
+    #fixed-page{
+      background-color: white;
+      margin-left: 240px;
+      margin-right:55px;
+      padding: 20px;
+      padding-right:7px;
+    }
+
+    #content {
+      margin-left: 240px;
+      margin-right:55px;
+      padding: 20px;
+      padding-right:7px;
+      background-color: white;
+      height: 465px;
+      overflow: auto;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f2f2f2;
+
+    }
+
+    #header {
+      background-color: #f2f2f2;
+      color: #fff;
+      padding: 10px;
+      height: 40px;
+    }
+    .dropdown{
+     border: none;  width: 130px; height: 50px; border-radius:15%;
+     background-color: white; font-size:25px;
+    }
+    .dropdown:hover{
+    background-color: #f1f1f1;
+    }
+    .inner-dropdown{
+    width: 100px; height: 30px; border-radius:15%; background-color: white; font-size:16px;
+    }
+    .dropdown-form{
+    margin-left:10px;
+    }
+
+    #search-form {
+        margin: 0px 0% 0px 25%;
+    }
+
+    #search-form input[type="text"] {
+      width: 60%;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 40px;
+      height: 25px;
+      background-color: #e9e9e9;
+    }
+    #button{
+        border-radius: 50px;
+        color: #ccc;
+        margin: -37px 0% 0px 57%;
+    }
+    button {
+        border-radius: 60%;
+        margin-right: 30px;
+    }
+  </style>
+</head>
+<body>
+<div id="navigation">
+    <span><img src="./icons/Google_Drive_logo.png" style="height: 50px; "></span>
+    <span style=" margin: 0px 0% 0px 10%; font-size:25px;">My Drive </span><br><br>
+    <ul>
+        <li><a> </a></li>
+        <li><form><input class="dropdown" type="submit" value="&#10133;    New"></form></li><br>
+        <li><a href="#">My Drive</a></li>
+        <li><a href="#">Shared with me</a></li>
+        <li><a href="#">Recent</a></li>
+        <li><a href="#">Starred</a></li>
+        <li><a href="#">Spam</a></li>
+        <li><a href="#">Trash</a></li>
+    </ul>
+</div>
+
+<div id="header">
+
+    <form id="search-form">
+        <input type="text" placeholder="&#x1F50D;   Search in Drive ">
+        <div id="button">
+            <button><img src="./icons/filter.png"></button>
+            <button><img src="./icons/support.png"></button>
+            <button><img src="./icons/setting.png"></button>
+            <button><img src="./icons/app.png"></button>
+
+        </div>
+    </form>
+    <h1>Drive</h1>
+</div>
+<div id="fixed-page">
+
+    <form >
+        <select class="dropdown" >
+            <option > My Drive </option>
+        </select>
+    </form>
+    <br><div style="display: flex; margin-left: 10px;">
+    <span>
+      <form class="dropdown-form">
+        <select class="inner-dropdown">
+            <option > My Drive </option>
+        </select>
+    </form>
+    </span>
+    <span>
+      <form class="dropdown-form">
+        <select class="inner-dropdown">
+            <option > My Drive </option>
+        </select>
+    </form>
+    </span>
+    <span>
+      <form class="dropdown-form">
+        <select class="inner-dropdown">
+            <option > My Drive </option>
+        </select>
+    </form>
+    </span></div>
+</div>
+<div id="content">
+
+    hkjuhidm,csdjgfvjndj vndl peodfjwe id jweo  pfdipweo  pifpow jpoi w3
+     ferfv vrdvfdtgv fderfvxdt vdvbd dfdvbdfgvb vdbedvbbbbbbbbbbbbbbbb bbbbbb bbbbbbb bbbbb b bb bb
+    <h2>My Files</h2>
+    <ul>
+        <li><a href="#">File 1</a></li>
+        <li><a href="#">File 2</a></li>
+        <li><a href="#">File 3</a></li>
+    </ul>
+
+    <h2>Shared with Me</h2>
+    <ul>
+        <li><a href="#">Shared File 1</a></li>
+        <li><a href="#">Shared File 2</a></li>
+        <li><a href="#">Shared File 3</a></li>
+    </ul>
+
+    <h2>Recent Activity</h2>
+    <ul>
+        <li>John uploaded "Document.docx"</li>
+        <li>Sarah shared "Presentation.pptx" with you</li>
+        <li>Mark deleted "Image.jpg"</li>
+    </ul>
+    <h2>Shared with Me</h2>
+    <ul>
+        <li><a href="#">Shared File 1</a></li>
+        <li><a href="#">Shared File 2</a></li>
+        <li><a href="#">Shared File 3</a></li>
+    </ul>
+    <ul>
+        <li>John uploaded "Document.docx"</li>
+        <li>Sarah shared "Presentation.pptx" with you</li>
+        <li>Mark deleted "Image.jpg"</li>
+    </ul>
+    <h2>Shared with Me</h2>
+    <ul>
+        <li><a href="#">Shared File 1</a></li>
+        <li><a href="#">Shared File 2</a></li>
+        <li><a href="#">Shared File 3</a></li>
+    </ul>
+
+
+
+</div>
+<div id="navigation-right">
+
+</div>
+</body>
+</html>
