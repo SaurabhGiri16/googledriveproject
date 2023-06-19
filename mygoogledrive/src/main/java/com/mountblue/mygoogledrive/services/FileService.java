@@ -18,7 +18,7 @@ public class FileService {
     }
 
     public List<File> getAllFiles() {
-        return fileRepository.findAll();
+        return fileRepository.findByIsTrashedFalse();
     }
 
     public File findFileByFileId(long id) {
@@ -40,6 +40,19 @@ public class FileService {
         fileRepository.save(file);
         return true;
     }
+    public List<File> getTrashedFiles() {
+        return fileRepository.findByIsTrashedTrue();
+    }
 
+    public boolean delete(long id){
+        fileRepository.deleteById(id);
+        return true;
+    }
 
+    public void renameFile(long id, String name){
+        File file = fileRepository.findById(id).get();
+        file.setFileName(name);
+        file.setUpdatedAt(LocalDate.now());
+        fileRepository.save(file);
+    }
 }

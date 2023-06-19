@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -25,13 +26,44 @@ public class FileController {
     @Autowired
     private FileService fileService;
 
-    @GetMapping("/")
-    public String home(Model model) {
-        List<File> allFiles = fileService.getAllFiles();
+    private Logger logger = LoggerFactory.getLogger(java.io.File.class);
+
+//    @GetMapping({"/","/drive","/drive/my-drive"})
+//    public String home(Model model) {
+//        List<File> allFiles = fileService.getAllFiles();
+//        model.addAttribute("allFiles",allFiles);
+//        return "home";
+//    }
+@GetMapping({"/", "/drive"})
+public String home(Model model) {
+    List<File> allFiles = fileService.getAllFiles();
+    List<String> formattedSizes = new ArrayList<>();
+
+    for (File file : allFiles) {
+        formattedSizes.add(formatFileSize(file.getSize()));
+    }
+
+    model.addAttribute("allFiles", allFiles);
+    model.addAttribute("formattedSizes", formattedSizes);
+    return "home";
+}
+
+    private String formatFileSize(long size) {
+        if (size < 1024) {
+            return size + " bytes";
+        } else if (size < 1024 * 1024) {
+            return (size / 1024) + " KB";
+        } else {
+            return (size / (1024 * 1024)) + " MB";
+        }
+    }
+
+    @GetMapping("/trash")
+    public String trash(Model model){
+        List<File> allFiles = fileService.getTrashedFiles();
         model.addAttribute("allFiles",allFiles);
         return "home";
     }
-    private Logger logger = LoggerFactory.getLogger(java.io.File.class);
 
     @PostMapping("/upload")
     public String fileUpload(@RequestParam("files[]") MultipartFile[] files, Model model) throws IOException {
@@ -47,12 +79,11 @@ public class FileController {
             uploadFile.setSize(multipartFile.getSize());
             fileService.createFile(uploadFile);
         });
-
         model.addAttribute("success", "File Upload Successfully");
-        return "home";
+        return "redirect:/drive";
     }
 
-    @GetMapping("/download")
+    @GetMapping("/image")
     public void downloadFile(@Param("fileId") Long fileId, Model model, HttpServletResponse response) throws IOException {
         File file = fileService.findFileByFileId(fileId);
         if (file != null) {
@@ -66,12 +97,34 @@ public class FileController {
         }
     }
 
-    @GetMapping("/image")
+    @GetMapping("/download")
     public void showImage(@Param("fileId") Long fileId, HttpServletResponse response, File file) throws IOException {
         file = fileService.findFileByFileId(fileId);
         response.setContentType("image/jpeg, image/jpg, image/png, image/gif, image/pdf");
         response.getOutputStream().write(file.getContent());
         response.getOutputStream().close();
     }
+
+//    @GetMapping("/trash")
+//    public void trashFile(@Param("fileId") long fileId){
+//        fileService.trashed(fileId);
+//    }
+
+    @GetMapping("/restore")
+    public void restoreFile(@Param("fileId") long fileId){
+        fileService.restore(fileId);
+    }
+
+    @GetMapping("/delete")
+    public void deleteFile(@Param("fileId") long fileId){
+        fileService.delete(fileId);
+    }
+
+    @GetMapping("/rename")
+    public void renameFile(@Param("fileId") long fileId, @Param("name") String name){
+        fileService.renameFile(fileId, name);
+    }
+
+
 
 }
