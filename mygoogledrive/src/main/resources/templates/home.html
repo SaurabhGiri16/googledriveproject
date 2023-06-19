@@ -1,13 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Home</title>
+    <title>My Drive-Google Drive</title>
     <style>
 
     #navigation {
-      background-color: #f2f2f2;
-      width: 200px;
+      width: 270px;
       height: 100vh;
       position: fixed;
       top: 0;
@@ -15,7 +14,6 @@
       padding: 20px;
     }
     #navigation-right {
-      background-color: #f2f2f2;
       width: 30px;
       height: 100vh;
       position: fixed;
@@ -24,97 +22,176 @@
       padding: 20px;
       margin: 0px 0px 0px 96%;
     }
-
     #navigation ul {
       list-style-type: none;
       padding: 0;
       margin: 0;
     }
-
     #navigation ul li {
       margin-bottom: 10px;
     }
-
     #navigation ul li a {
       text-decoration: none;
       color: #333;
     }
     #fixed-page{
       background-color: white;
-      margin-left: 240px;
-      margin-right:55px;
+      margin-left: 280px;
+      width:74.5%;
       padding: 20px;
       padding-right:7px;
     }
-
     #content {
-      margin-left: 240px;
+      margin-left: 280px;
       margin-right:55px;
       padding: 20px;
       padding-right:7px;
       background-color: white;
-      height: 465px;
-      overflow: auto;
-    }
 
+    }
     body {
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
-      background-color: #f2f2f2;
-
+      background-color: #f6fafa;
     }
-
     #header {
-      background-color: #f2f2f2;
       color: #fff;
       padding: 10px;
-      height: 40px;
+      height: 50px;
+      width:100%;
     }
     .dropdown{
-     border: none;  width: 130px; height: 50px; border-radius:15%;
-     background-color: white; font-size:25px;
+     border: none;  width: 130px;
+     height: 50px; border-radius:15%;
+     background-color: white;
+     font-size:25px;
     }
     .dropdown:hover{
     background-color: #f1f1f1;
     }
     .inner-dropdown{
-    width: 100px; height: 30px; border-radius:15%; background-color: white; font-size:16px;
+    width: 100px;
+    height: 30px;
+    border-radius:10px;
+    background-color: white;
+    font-size:16px;
     }
     .dropdown-form{
     margin-left:10px;
     }
-
     #search-form {
-        margin: 0px 0% 0px 25%;
+        margin: 0px 0% 0px 20%;
     }
-
     #search-form input[type="text"] {
-      width: 60%;
+      width: 70%;
       padding: 8px;
       border: 1px solid #ccc;
       border-radius: 40px;
-      height: 25px;
-      background-color: #e9e9e9;
+      height: 35px;
+      background-color: #f3fafa;
     }
     #button{
         border-radius: 50px;
         color: #ccc;
-        margin: -37px 0% 0px 57%;
+        margin: -40px 0% 0px 67%;
+    }
+    #buttons{
+        border-radius: 50px;
+        color: #ccc;
+        margin: -22px 0% 0px 83%;
     }
     button {
         border-radius: 60%;
-        margin-right: 30px;
+        margin-right: 15px;
     }
-  </style>
+     table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+    th, td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+    th {
+    background-color: #f2f2f2;
+  }
+    tr:hover {
+    background-color: #f5f5f5;
+  }
+    a {
+    color: blue;
+    text-decoration: none;
+  }
+
+   a:hover {
+    text-decoration: underline;
+  }
+    .popup {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: #b1b1b1;
+      border: 1px solid #ccc;
+      padding: 20px;
+      z-index: 1;
+    }
+    .popup-form input[type="text"],
+    .popup-form input[type="email"],
+    .popup-form input[type="submit"] {
+      margin-bottom: 10px;
+    }
+    </style>
+    <script>
+    function toggleForm() {
+      var form = document.getElementById("myForm");
+      if (form.style.display === "none") {
+        form.style.display = "block";
+      } else {
+        form.style.display = "none";
+      }
+    }
+    function togglePopup() {
+      var popup = document.getElementById("myPopup");
+      if (popup.style.display === "none") {
+        popup.style.display = "block";
+      } else {
+        popup.style.display = "none";
+      }
+    }
+    function togglePopupFix(){
+    var popup = document.getElementById("fixed-popup");
+      if (popup.style.display === "none") {
+        popup.style.display = "flex";
+      } else {
+        popup.style.display = "none";
+      }
+    }
+    </script>
 </head>
+
 <body>
 <div id="navigation">
-    <span><img src="./icons/Google_Drive_logo.png" style="height: 50px; "></span>
+    <span><img src="./drive.png" style="height: 50px; "></span>
     <span style=" margin: 0px 0% 0px 10%; font-size:25px;">My Drive </span><br><br>
+    <div id="myPopup" class="popup"><br>
+        <form action="/upload" method="post" enctype="multipart/form-data">
+            <input type="file" name="files[]" multiple value="File upload"><input type="submit" >
+        </form>
+        <form action="/image">
+            <input type="text" name="fileId"><input type="submit">
+        </form>
+    </div>
     <ul>
-        <li><a> </a></li>
-        <li><form><input class="dropdown" type="submit" value="&#10133;    New"></form></li><br>
+        <li>
+            <button onclick="togglePopup()" class="dropdown" value="&#10133; New" style="width:130px; height:50px;">
+                &#10133; New
+            </button>
+        </li>
+        <br>
         <li><a href="#">My Drive</a></li>
         <li><a href="#">Shared with me</a></li>
         <li><a href="#">Recent</a></li>
@@ -125,96 +202,84 @@
 </div>
 
 <div id="header">
-
     <form id="search-form">
         <input type="text" placeholder="&#x1F50D;   Search in Drive ">
         <div id="button">
-            <button><img src="./icons/filter.png"></button>
+            <button><img src="templates/icons/filter.png"></button>
+        </div>
+        <div id ="buttons">
             <button><img src="./icons/support.png"></button>
             <button><img src="./icons/setting.png"></button>
             <button><img src="./icons/app.png"></button>
-
         </div>
     </form>
-    <h1>Drive</h1>
+
 </div>
 <div id="fixed-page">
+    <div>
+         <span style="display:flex;">
+    <form>
+        <select class="dropdown">
+            <option> My Drive </option>
+            <option> My Drive </option>
+            <option> My Drive </option>
+            <option> My Drive </option>
+            <option> My Drive </option>
+        </select>
+    </form></span>
+        <span><button onclick="togglePopupFix()" class="dropdown"
+                      style="margin-left: 900px; width:40px; height:40px;"><img src ="./icons/filter.png"></button></span>
+    </div>
 
-    <form >
-        <select class="dropdown" >
-            <option > My Drive </option>
-        </select>
-    </form>
-    <br><div style="display: flex; margin-left: 10px;">
+    <div id="fixed-popup" style="display: none; margin-left: 10px;">
     <span>
       <form class="dropdown-form">
         <select class="inner-dropdown">
-            <option > My Drive </option>
+            <option> My Drive </option>
         </select>
     </form>
     </span>
-    <span>
+        <span>
       <form class="dropdown-form">
         <select class="inner-dropdown">
-            <option > My Drive </option>
+            <option> My Drive </option>
         </select>
     </form>
     </span>
-    <span>
+        <span>
       <form class="dropdown-form">
         <select class="inner-dropdown">
-            <option > My Drive </option>
+            <option> My Drive </option>
         </select>
     </form>
-    </span></div>
+    </span>
+    </div>
+
 </div>
 <div id="content">
-
-    hkjuhidm,csdjgfvjndj vndl peodfjwe id jweo  pfdipweo  pifpow jpoi w3
-     ferfv vrdvfdtgv fderfvxdt vdvbd dfdvbdfgvb vdbedvbbbbbbbbbbbbbbbb bbbbbb bbbbbbb bbbbb b bb bb
-    <h2>My Files</h2>
-    <ul>
-        <li><a href="#">File 1</a></li>
-        <li><a href="#">File 2</a></li>
-        <li><a href="#">File 3</a></li>
-    </ul>
-
-    <h2>Shared with Me</h2>
-    <ul>
-        <li><a href="#">Shared File 1</a></li>
-        <li><a href="#">Shared File 2</a></li>
-        <li><a href="#">Shared File 3</a></li>
-    </ul>
-
-    <h2>Recent Activity</h2>
-    <ul>
-        <li>John uploaded "Document.docx"</li>
-        <li>Sarah shared "Presentation.pptx" with you</li>
-        <li>Mark deleted "Image.jpg"</li>
-    </ul>
-    <h2>Shared with Me</h2>
-    <ul>
-        <li><a href="#">Shared File 1</a></li>
-        <li><a href="#">Shared File 2</a></li>
-        <li><a href="#">Shared File 3</a></li>
-    </ul>
-    <ul>
-        <li>John uploaded "Document.docx"</li>
-        <li>Sarah shared "Presentation.pptx" with you</li>
-        <li>Mark deleted "Image.jpg"</li>
-    </ul>
-    <h2>Shared with Me</h2>
-    <ul>
-        <li><a href="#">Shared File 1</a></li>
-        <li><a href="#">Shared File 2</a></li>
-        <li><a href="#">Shared File 3</a></li>
-    </ul>
-
-
-
+    <div>
+        <table>
+            <thead >
+            <tr >
+                 <th>Name</th>
+                <th>Owner</th>
+                <th>Last Modified</th>
+                <th>File Size</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="file: ${allFiles}">
+                <td th:text="${file.fileName}"></td>
+                <td></td>
+                <td th:text="${file.updatedAt}"></td>
+                <td th:text="${file.size}+' bytes'"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 </div>
 <div id="navigation-right">
-
 </div>
+
 </body>
 </html>
