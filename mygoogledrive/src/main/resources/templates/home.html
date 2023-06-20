@@ -2,7 +2,9 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>My Drive-Google Drive</title>
+    <title>My Drive - Google Drive</title>
+    <link rel="Short Icon" type="image/png" ; href="logo.png">
+
     <style>
 
     #navigation {
@@ -47,7 +49,8 @@
       padding: 20px;
       padding-right:7px;
       background-color: white;
-
+      height: 450px; /* Set the desired height */
+      overflow: auto; /* Enable scrolling */
     }
     body {
       font-family: Arial, sans-serif;
@@ -80,6 +83,7 @@
     }
     .dropdown-form{
     margin-left:10px;
+
     }
     #search-form {
         margin: 0px 0% 0px 20%;
@@ -147,11 +151,91 @@
     }
      #toggle-forms{
     display:none;
-    padding-left:70%;
+    margin-left:50%;
+    margin-top:-8%;
+    position:absolute;
+    flex-direction:column;
+    border: 1px solid black;
+    width:fit-content;
     }
 
+  .form-container {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin-left:45%;
+  width: 200px;
+  display:none;
+  position:absolute;
+}
 
+.form-container form {
+  margin: 0;
+}
+
+.form-container h2 {
+  margin: 0 0 20px;
+}
+
+.link-list {
+  display: flex;
+  flex-direction: column;
+  background-color:white;
+}
+
+.link-list a {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  color: #333;
+  display: block;
+  margin-bottom: 10px;
+  padding: 10px;
+  text-decoration: none;
+}
+
+.link-list a:hover {
+  background-color: #f5f5f5;
+}
+  #calendar {
+      display: none;
+      width: 20%;
+      height: 400px;
+      position:absolute;
+      background-color:white;
+      margin-left:55%;
+    }
+    #calender-logo{
+    width:25px; height:25px;
+    margin:60px 20px 0px 0px;
+    }
     </style>
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@3.10.2/dist/fullcalendar.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@3.10.2/dist/fullcalendar.min.js"></script>
+    <script>
+    $(document).ready(function() {
+      var calendarVisible = false;
+      var $calendar = $('#calendar');
+
+      function toggleCalendar() {
+        calendarVisible = !calendarVisible;
+        $calendar.toggle(calendarVisible);
+      }
+
+      $('#showCalendarButton').click(function() {
+        toggleCalendar();
+      });
+
+      $calendar.fullCalendar({
+
+      });
+    });
+  </script>
+
     <script>
     function toggleForm() {
       var form = document.getElementById("myForm");
@@ -177,10 +261,11 @@
         popup.style.display = "none";
       }
     }
-    function toggleFileForms(){
+    function toggleFileForms(value){
+    console.log(value);
     var popup = document.getElementById("toggle-forms");
       if (popup.style.display === "none") {
-        popup.style.display = "block";
+        popup.style.display = "flex" ;
       } else {
         popup.style.display = "none";
       }
@@ -193,21 +278,25 @@
 
 <body>
 <div id="navigation">
-    <span><img src="mydrive.png" style="height: 50px; height:60px;"></span>
-    <br><br>
-    <div id="myPopup" class="popup"><br>
+    <span><img th:src="@{/mydrive.png}" style="height: 50px; height:60px;"></span>
+    <div id="myPopup" class="form-container">
         <form action="/upload" method="post" enctype="multipart/form-data">
-            <input type="file" name="files[]" multiple value="File upload"><input type="submit">
-        </form>
-        <form action="/image">
-            <input type="text" name="fileId"><input type="submit">
+            <div class="link-list">
+                <input type="file" name="files[]" multiple><br>
+                <input type="submit" value="Upload Files">
+                <hr>
+                <a href="#">Download</a>
+                <a href="#">Rename</a>
+                <a href="#">Move To Trash</a>
+                <a href="#">Remove</a>
+            </div>
         </form>
     </div>
     <ul>
         <li>
             <button onclick="togglePopup()" class="dropdown"
                     style="width:110px; height:60px;box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.4); font-size:20px;">
-                <img src="new.png">New
+                <img th:src="@{/new.png}">New
             </button>
         </li>
         <br>
@@ -224,28 +313,31 @@
     <form id="search-form">
         <input type="text" placeholder="&#x1F50D;   Search in Drive ">
         <div id="button">
-            <button style="border:none; background-color:transparent;"><img src="filter.png"></button>
+            <button style="border:none; background-color:transparent;"><img th:src="@{/filter.png}"></button>
         </div>
         <div id="buttons">
-            <button style="border:none; background-color:transparent;"><img src="support.png"></button>
-            <button style="border:none; background-color:transparent;"><img src="setting.png"></button>
-            <button style="border:none; background-color:transparent;"><img src="app.png"></button>
+            <button style="border:none; background-color:transparent;"><img th:src="@{/support.png}"></button>
+            <button style="border:none; background-color:transparent;"><img th:src="@{/setting.png}"></button>
+            <button style="border:none; background-color:transparent;"><img th:src="@{/app.png}"></button>
         </div>
     </form>
-    <div id="toggle-forms">
-        <form>
-            <select>
-            <option>Download</option>
-            <option>Rename</option>
-            <option>View Details</option>
-            <option>Move</option>
-            <option>Remove</option>
-            </select>
-        </form>
-    </div>
+
 
 </div>
 <div id="fixed-page">
+    <div id="calendar"></div>
+        <div >
+            <form id="toggle-forms" class="form-container">
+                <div class="link-list">
+                    <a href="#"><img src="preview.png"> Preview</a>
+                    <a href="#"><img src="view-details.png"> View Details</a>
+                    <a href=""><img src="download.png"> Download</a>
+                    <a href="#"><img src="rename.png"> Rename</a>
+                    <a href="#"><img src="trash.png"> Move To Trash/Restore</a>
+                    <a href="#"><img src="remove.png"> Remove</a>
+                </div>
+            </form>
+        </div>
     <div>
          <span style="display:flex;">
     <form>
@@ -259,10 +351,10 @@
     </form></span>
         <span><button onclick="togglePopupFix()" class="dropdown"
                       style="margin-left: 900px; width:40px; height:40px;"><img
-                src="outline_filter.png"></button></span>
+                th:src="@{/outline_filter.png}"></button></span>
     </div>
 
-    <div id="fixed-popup" style="display: none; margin-left: 10px;">
+    <div id="fixed-popup" style="display: none; margin-left: 10px; position:absolute;">
     <span>
       <form class="dropdown-form">
         <select class="inner-dropdown">
@@ -285,7 +377,6 @@
     </form>
     </span>
     </div>
-
 </div>
 <div id="content">
     <div>
@@ -301,14 +392,14 @@
             </thead>
             <tbody>
             <tr th:each="file, index : ${allFiles}">
-                <td th:text="${file.fileName}"></td>
+                <td><a th:href="@{/image{fileId}(fileId=${file.id})}">
+                    <span th:text="${file.fileName}" style="color:black;"></span></a></td>
                 <td></td>
-                <td th:text="${file.updatedAt}"></td>
-                <!--                <td th:text="${file.size}+' bytes'"></td>-->
+                    <td th:text="${file.updatedAt}"></td>
                 <td th:text="${formattedSizes[__${index.index}__]}"></td>
                 <td>
-                    <button style="border:none; background-color:transparent;" onclick="toggleFileForms()"><img
-                            src="more.png"></button>
+                    <button style="border:none; background-color:transparent;" onclick="toggleFileForms('${file.id}');"><img
+                            th:src="@{/more.png}"></button>
                 </td>
             </tr>
             </tbody>
@@ -316,7 +407,9 @@
     </div>
 </div>
 <div id="navigation-right">
-</div>
+    <button id="showCalendarButton" style="border:none;" ><img th:src="@{/calender.png}" id="calender-logo" ></button>
 
+
+</div>
 </body>
 </html>

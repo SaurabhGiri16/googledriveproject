@@ -31,4 +31,7 @@ public class File {
         this.setUpdatedAt(LocalDate.now());
         this.isTrashed= false;
     }
+    public boolean getTrashed(){
+        return this.isTrashed;
+    }
 }

@@ -25,29 +25,27 @@ public class FileService {
         return fileRepository.findById(id).get();
     }
 
-    public boolean trashed(long id){
+    public boolean move(long id){
         File file = fileRepository.findById(id).get();
-        file.setTrashed(true);
+        if(file.getTrashed()){
+            file.setTrashed(false);
+        }else{
+            file.setTrashed(true);
+        }
         file.setUpdatedAt(LocalDate.now());
         fileRepository.save(file);
         return true;
-    }
-
-    public boolean restore(long id){
-        File file = fileRepository.findById(id).get();
-        file.setTrashed(false);
-        file.setUpdatedAt(LocalDate.now());
-        fileRepository.save(file);
-        return true;
-    }
-    public List<File> getTrashedFiles() {
-        return fileRepository.findByIsTrashedTrue();
     }
 
     public boolean delete(long id){
         fileRepository.deleteById(id);
         return true;
     }
+
+    public List<File> getTrashedFiles() {
+        return fileRepository.findByIsTrashedTrue();
+    }
+
 
     public void renameFile(long id, String name){
         File file = fileRepository.findById(id).get();
