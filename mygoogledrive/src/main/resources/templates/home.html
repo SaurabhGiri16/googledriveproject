@@ -211,6 +211,43 @@
     background-color:#e8e5df;
     }
 
+    .image-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+}
+
+.image-item {
+  text-align: center;
+}
+
+.thumbnail-image {
+  width: 200px;
+  height: 150px;
+}
+
+.file-name {
+  display: block;
+  width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 14px;
+  color: #555;
+}
+
+.list-layout-image {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 50px; /* Adjust the width as needed */
+  height: auto;
+}
+#grid-layout-content {
+  display: none;
+}
+
     </style>
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@3.10.2/dist/fullcalendar.min.css" rel="stylesheet"/>
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
@@ -262,6 +299,21 @@
     form.submit();
 }
 
+document.addEventListener('DOMContentLoaded', function() {
+  var logo = document.getElementById('list-layout');
+  var listLayoutContent = document.getElementById('list-layout-content');
+  var gridLayoutContent = document.getElementById('grid-layout-content');
+
+  logo.addEventListener('click', function() {
+    if (listLayoutContent.style.display === 'block') {
+      listLayoutContent.style.display = 'none';
+      gridLayoutContent.style.display = 'block';
+    } else {
+      listLayoutContent.style.display = 'block';
+      gridLayoutContent.style.display = 'none';
+    }
+  });
+});
     </script>
 </head>
 <body>
@@ -330,6 +382,11 @@
     <div>
          <span style="display:flex;">
     <form>
+
+    <a href="#" id="list-layout-link">
+        <img th:src="@{/listlayout.png}" alt="List Layout" class="list-layout-image" id="list-layout">
+    </a>
+
         <select class="dropdown">
             <option> My Drive </option>
             <option> My Drive </option>
@@ -376,6 +433,25 @@
     </span>
     </div>
 </div>
+
+<div class="image-container">
+    <th:block th:each="file, iterStat : ${allFiles}" th:if="${iterStat.count} &lt;= 6">
+        <div class="image-item" th:if="${file.fileType != null and (file.fileType.equals('png'))}">
+            <a th:href="@{/drive/view/{fileId}(fileId=${file.id})}">
+                <span th:text="${file.fileName}" class="file-name"></span>
+                <img th:src="@{/drive/view/{fileId}(fileId=${file.id})}" class="thumbnail-image" alt="Image">
+            </a>
+        </div>
+        <div class="pdf-item" th:if="${file.fileType != null and file.fileType.equals('pdf')}">
+            <a th:href="@{/drive/view/{fileId}(fileId=${file.id})}">
+                <span th:text="${file.fileName}" class="file-name"></span>
+                <img th:src="@{/drive/pdfthumbnail/{fileId}(fileId=${file.id})}" class="thumbnail-image" alt="PDF Thumbnail">
+            </a>
+        </div>
+    </th:block>
+</div>
+
+<div id="list-layout-content">
 <div id="content">
     <div>
         <table>
@@ -412,6 +488,27 @@
         </table>
     </div>
 </div>
+</div>
+
+<div id="grid-layout-content">
+    <div class="image-container">
+        <th:block th:each="file : ${allFiles}">
+            <div class="image-item" th:if="${file.fileType != null and (file.fileType.equals('png'))}">
+                <a th:href="@{/drive/view/{fileId}(fileId=${file.id})}">
+                    <span th:text="${file.fileName}" class="file-name"></span>
+                    <img th:src="@{/drive/view/{fileId}(fileId=${file.id})}" class="thumbnail-image" alt="Image">
+                </a>
+            </div>
+            <div class="pdf-item" th:if="${file.fileType != null and file.fileType.equals('pdf')}">
+                <a th:href="@{/drive/view/{fileId}(fileId=${file.id})}">
+                    <span th:text="${file.fileName}" class="file-name"></span>
+                    <img th:src="@{/drive/pdfthumbnail/{fileId}(fileId=${file.id})}" class="thumbnail-image" alt="PDF Thumbnail">
+                </a>
+            </div>
+        </th:block>
+    </div>
+</div>
+
 <div id="navigation-right">
     <button id="showCalendarButton" style="border:none; background-color:transparent;"><img th:src="@{/calender.png}"
                                                                                             alt="calender"

@@ -2,6 +2,7 @@ package com.mountblue.mygoogledrive.controllers;
 
 import com.mountblue.mygoogledrive.entities.File;
 import com.mountblue.mygoogledrive.services.FileService;
+import com.mountblue.mygoogledrive.services.ThumbnailService;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.io.FilenameUtils;
@@ -30,6 +31,8 @@ import java.util.List;
 
 @Controller
 public class FileController {
+    @Autowired
+    private ThumbnailService thumbnailService;
     @Autowired
     private FileService fileService;
 
@@ -146,6 +149,18 @@ public class FileController {
             return "video/mp4";
         }
         return null;
+    }
+    @GetMapping("/drive/pdfthumbnail/{fileId}")
+    public ResponseEntity<Resource> getPdfThumbnail(@PathVariable("fileId") Long fileId) throws IOException {
+        File file = fileService.findFileByFileId(fileId);
+
+        byte[] thumbnail = thumbnailService.generateThumbnail(file.getContent());
+        InputStreamResource resource = new InputStreamResource(new ByteArrayInputStream(thumbnail));
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.IMAGE_PNG);
+
+        return new ResponseEntity<>(resource, headers, HttpStatus.OK);
     }
 
     @GetMapping("/image{fileId}")
