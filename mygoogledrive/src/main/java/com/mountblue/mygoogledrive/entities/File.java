@@ -25,6 +25,8 @@ public class File {
     private LocalDate createdAt;
     private LocalDate updatedAt;
 
+    private String fileType;
+
     @PrePersist
     public void prePersist() {
         this.setCreatedAt(LocalDate.now());

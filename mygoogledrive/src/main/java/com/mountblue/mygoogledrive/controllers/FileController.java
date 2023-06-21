@@ -4,9 +4,16 @@ import com.mountblue.mygoogledrive.entities.File;
 import com.mountblue.mygoogledrive.services.FileService;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletResponse;
+import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,7 +22,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -82,6 +89,29 @@ public String home(Model model) {
         });
         model.addAttribute("success", "File Upload Successfully");
         return "redirect:/drive";
+    }
+
+    @GetMapping("/drive/view/{fileId}")
+    public ResponseEntity<Resource> viewFile(@PathVariable("fileId") Long fileId) {
+        File file = fileService.findFileByFileId(fileId);
+        String fileExtension = FilenameUtils.getExtension(file.getFileName());
+        MediaType mediaType = MediaType.parseMediaType(getMimeTypeFromExtension(fileExtension));
+
+        InputStreamResource resource = new InputStreamResource(new ByteArrayInputStream(file.getContent()));
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(mediaType);
+        return new ResponseEntity<>(resource, headers, HttpStatus.OK);
+    }
+
+    private String getMimeTypeFromExtension(String extension) {
+        if (extension.equalsIgnoreCase("png")) {
+            return "image/png";
+        } else if (extension.equalsIgnoreCase("pdf")) {
+            return "application/pdf";
+        } else if (extension.equalsIgnoreCase("mp4")) {
+            return "video/mp4";
+        }
+        return null;
     }
 
     @GetMapping("/image{fileId}")
