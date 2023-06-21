@@ -36,14 +36,14 @@ public class FileController {
     private Logger logger = LoggerFactory.getLogger(java.io.File.class);
 
 @GetMapping({"/", "/drive","/drive/my-drive"})
-public String home(Model model) {
+public String home(Model model ,@RequestParam(value = "fileId", defaultValue = " ", required = false) String fileId) {
     List<File> allFiles = fileService.getAllFiles();
     List<String> formattedSizes = new ArrayList<>();
 
     for (File file : allFiles) {
         formattedSizes.add(formatFileSize(file.getSize()));
     }
-
+    model.addAttribute("fileId", fileId);
     model.addAttribute("allFiles", allFiles);
     model.addAttribute("formattedSizes", formattedSizes);
     return "home";
@@ -60,13 +60,14 @@ public String home(Model model) {
     }
 
     @GetMapping("/trash")
-    public String trash(Model model){
+    public String trash(Model model,@RequestParam(value = "fileId", defaultValue = " ", required = false) String fileId){
         List<File> allFiles = fileService.getTrashedFiles();
         List<String> formattedSizes = new ArrayList<>();
 
         for (File file : allFiles) {
             formattedSizes.add(formatFileSize(file.getSize()));
         }
+        model.addAttribute("fileId", fileId);
         model.addAttribute("allFiles",allFiles);
         model.addAttribute("formattedSizes", formattedSizes);
 

@@ -3,11 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <title>My Drive - Google Drive</title>
-    <link rel="Short Icon" type="image/png" ; href="logo.png">
-
+    <link rel="Short Icon" type="image/png" ; th:href="@{/logo.png}">
     <style>
-
-    #navigation {
+#navigation {
       width: 270px;
       height: 100vh;
       position: fixed;
@@ -70,8 +68,7 @@
      background-color: white;
      font-size:25px;
     }
-
-    .dropdown:hover{
+.dropdown:hover{
     background-color: #f1f1f1;
     }
     .inner-dropdown{
@@ -150,16 +147,15 @@
       margin-bottom: 10px;
     }
      #toggle-forms{
-    display:none;
+    display:flex;
     margin-left:50%;
-    margin-top:-8%;
+    margin-top:0%;
     position:absolute;
     flex-direction:column;
     border: 1px solid black;
     width:fit-content;
     }
-
-  .form-container {
+.form-container {
   background-color: #fff;
   border: 1px solid #ccc;
   border-radius: 5px;
@@ -170,21 +166,17 @@
   display:none;
   position:absolute;
 }
-
 .form-container form {
   margin: 0;
 }
-
 .form-container h2 {
   margin: 0 0 20px;
 }
-
 .link-list {
   display: flex;
   flex-direction: column;
   background-color:white;
 }
-
 .link-list a {
   border: 1px solid #ccc;
   border-radius: 5px;
@@ -195,7 +187,6 @@
   padding: 10px;
   text-decoration: none;
 }
-
 .link-list a:hover {
   background-color: #f5f5f5;
 }
@@ -211,8 +202,13 @@
     width:25px; height:25px;
     margin:60px 20px 0px 0px;
     }
+    .right-side-logo{
+    width:25px; height:25px;
+    margin:40px 20px 0px 0px;
+    }
+
     </style>
-    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@3.10.2/dist/fullcalendar.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@3.10.2/dist/fullcalendar.min.css" rel="stylesheet"/>
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/moment.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@3.10.2/dist/fullcalendar.min.js"></script>
@@ -220,22 +216,18 @@
     $(document).ready(function() {
       var calendarVisible = false;
       var $calendar = $('#calendar');
-
       function toggleCalendar() {
         calendarVisible = !calendarVisible;
         $calendar.toggle(calendarVisible);
       }
-
       $('#showCalendarButton').click(function() {
         toggleCalendar();
       });
-
       $calendar.fullCalendar({
-
       });
     });
-  </script>
 
+    </script>
     <script>
     function toggleForm() {
       var form = document.getElementById("myForm");
@@ -261,21 +253,13 @@
         popup.style.display = "none";
       }
     }
-    function toggleFileForms(value){
-    console.log(value);
-    var popup = document.getElementById("toggle-forms");
-      if (popup.style.display === "none") {
-        popup.style.display = "flex" ;
-      } else {
-        popup.style.display = "none";
-      }
-    }
-
-
+    function submitForm() {
+    var form = document.getElementById('myForm');
+    form.submit();
+}
 
     </script>
 </head>
-
 <body>
 <div id="navigation">
     <span><img th:src="@{/mydrive.png}" style="height: 50px; height:60px;"></span>
@@ -300,15 +284,15 @@
             </button>
         </li>
         <br>
-        <li><a href="/drive">My Drive</a></li>
-        <li><a href="#">Shared with me</a></li>
-        <li><a href="#">Recent</a></li>
-        <li><a href="#">Starred</a></li>
-        <li><a href="#">Spam</a></li>
-        <li><a href="/trash">Trash</a></li>
+        <li style="margin-left:15px;"><a href="/drive/my-drive"><img th:src="@{/drivemydrive.png}">
+            <span> My Drive</span></a></li>
+        <li style="margin-left:15px;"><a href="#"><img th:src="@{/group.png}"> Shared with me</a></li>
+        <li style="margin-left:15px;"><a href="#"><img th:src="@{/recent.png}">Recent</a></li>
+        <li style="margin-left:15px;"><a href="#">Starred</a></li>
+        <li style="margin-left:15px;"><a href="#">Spam</a></li>
+        <li style="margin-left:15px;"><a href="/trash"><img th:src="@{/remove.png}"> Trash</a></li>
     </ul>
 </div>
-
 <div id="header">
     <form id="search-form">
         <input type="text" placeholder="&#x1F50D;   Search in Drive ">
@@ -321,23 +305,22 @@
             <button style="border:none; background-color:transparent;"><img th:src="@{/app.png}"></button>
         </div>
     </form>
-
-
 </div>
 <div id="fixed-page">
     <div id="calendar"></div>
-        <div >
-            <form id="toggle-forms" class="form-container">
-                <div class="link-list">
-                    <a href="#"><img src="preview.png"> Preview</a>
-                    <a href="#"><img src="view-details.png"> View Details</a>
-                    <a href=""><img src="download.png"> Download</a>
-                    <a href="#"><img src="rename.png"> Rename</a>
-                    <a href="#"><img src="trash.png"> Move To Trash/Restore</a>
-                    <a href="#"><img src="remove.png"> Remove</a>
-                </div>
-            </form>
-        </div>
+    <div th:if="${fileId != ' '}">
+        <form id="toggle-forms" class="form-container">
+            <div class="link-list">
+                <a href=""><img src="preview.png"> Preview</a>
+                <a href="#"><img src="view-details.png"> View Details</a>
+                <a th:href="@{/download{fileId}(fileId=${fileId})}"><img src="download.png"> Download</a>
+                <a href="#"><img src="rename.png"> Rename</a>
+                <a href="#"><img src="trash.png"> Move To Trash/Restore</a>
+                <a href="#"><img src="remove.png"> Remove</a>
+                <a href="/">Reset</a>
+            </div>
+        </form>
+    </div>
     <div>
          <span style="display:flex;">
     <form>
@@ -392,14 +375,17 @@
             </thead>
             <tbody>
             <tr th:each="file, index : ${allFiles}">
-                <td><a th:href="@{/image{fileId}(fileId=${file.id})}">
-                    <span th:text="${file.fileName}" style="color:black;"></span></a></td>
+                <td><a th:href="@{/image{fileId}(fileId=${file.id})}"><span th:text="${file.fileName}"
+                                                                            style="color:black;"></span></a></td>
                 <td></td>
-                    <td th:text="${file.updatedAt}"></td>
+                <td th:text="${file.updatedAt}"></td>
                 <td th:text="${formattedSizes[__${index.index}__]}"></td>
                 <td>
-                    <button style="border:none; background-color:transparent;" onclick="toggleFileForms('${file.id}');"><img
-                            th:src="@{/more.png}"></button>
+                    <form id="myForm" action="/">
+                        <input type="hidden" th:name="fileId" th:value="${file.id}">
+                        <button style="border:none; background-color:transparent;" onclick="submitForm()"><img
+                                th:src="@{/more.png}"></button>
+                    </form>
                 </td>
             </tr>
             </tbody>
@@ -407,9 +393,19 @@
     </div>
 </div>
 <div id="navigation-right">
-    <button id="showCalendarButton" style="border:none;" ><img th:src="@{/calender.png}" id="calender-logo" ></button>
-
-
+    <button id="showCalendarButton" style="border:none; background-color:transparent;"><img th:src="@{/calender.png}"
+                                                                                            alt="calender"
+                                                                                            id="calender-logo"></button>
+    <button style="border:none; background-color:transparent;"><img th:src="@{/keep.png}" alt="keep"
+                                                                    class="right-side-logo"></button>
+    <button style="border:none; background-color:transparent;"><img th:src="@{/task.png}" alt="tasks"
+                                                                    class="right-side-logo"></button>
+    <button style="border:none; background-color:transparent;"><img th:src="@{/peoples.png}" alt="contacts"
+                                                                    class="right-side-logo"></button>
+    <a href="https://workspace.google.com/u/0/marketplace/appfinder?host=drive">
+        <button style="border:none; background-color:transparent;"><img th:src="@{/new.png}" alt="add icons"
+                                                                        class="right-side-logo"></button>
+    </a>
 </div>
 </body>
 </html>
