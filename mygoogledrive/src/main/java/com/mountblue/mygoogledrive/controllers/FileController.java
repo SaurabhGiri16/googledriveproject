@@ -35,19 +35,20 @@ public class FileController {
 
     private Logger logger = LoggerFactory.getLogger(java.io.File.class);
 
-@GetMapping({"/", "/drive","/drive/my-drive"})
-public String home(Model model ,@RequestParam(value = "fileId", defaultValue = " ", required = false) String fileId) {
-    List<File> allFiles = fileService.getAllFiles();
-    List<String> formattedSizes = new ArrayList<>();
+    @GetMapping({"/", "/drive", "/drive/my-drive"})
+    public String home(Model model, @RequestParam(value = "fileId", defaultValue = " ", required = false) String fileId,
+                       @RequestParam(value = "q", defaultValue = "", required = false) String q) {
+        List<File> allFiles = fileService.getAllFiles(q);
+        List<String> formattedSizes = new ArrayList<>();
 
-    for (File file : allFiles) {
-        formattedSizes.add(formatFileSize(file.getSize()));
+        for (File file : allFiles) {
+            formattedSizes.add(formatFileSize(file.getSize()));
+        }
+        model.addAttribute("fileId", fileId);
+        model.addAttribute("allFiles", allFiles);
+        model.addAttribute("formattedSizes", formattedSizes);
+        return "home";
     }
-    model.addAttribute("fileId", fileId);
-    model.addAttribute("allFiles", allFiles);
-    model.addAttribute("formattedSizes", formattedSizes);
-    return "home";
-}
 
     private String formatFileSize(long size) {
         if (size < 1024) {
@@ -60,7 +61,7 @@ public String home(Model model ,@RequestParam(value = "fileId", defaultValue = "
     }
 
     @GetMapping("/trash")
-    public String trash(Model model,@RequestParam(value = "fileId", defaultValue = " ", required = false) String fileId){
+    public String trash(Model model, @RequestParam(value = "fileId", defaultValue = " ", required = false) String fileId) {
         List<File> allFiles = fileService.getTrashedFiles();
         List<String> formattedSizes = new ArrayList<>();
 
@@ -68,11 +69,29 @@ public String home(Model model ,@RequestParam(value = "fileId", defaultValue = "
             formattedSizes.add(formatFileSize(file.getSize()));
         }
         model.addAttribute("fileId", fileId);
-        model.addAttribute("allFiles",allFiles);
+        model.addAttribute("allFiles", allFiles);
         model.addAttribute("formattedSizes", formattedSizes);
 
         return "home";
     }
+
+//    @PostMapping("/upload")
+//    public String fileUpload(@RequestParam("files[]") MultipartFile[] files, Model model) throws IOException {
+//        Arrays.stream(files).forEach(multipartFile -> {
+//            File uploadFile = new File();
+//            uploadFile.setFileName(multipartFile.getOriginalFilename());
+//            System.out.println(multipartFile.getContentType());
+//            try {
+//                uploadFile.setContent(multipartFile.getBytes());
+//            } catch (IOException e) {
+//                throw new RuntimeException(e);
+//            }
+//            uploadFile.setSize(multipartFile.getSize());
+//            fileService.createFile(uploadFile);
+//        });
+//        model.addAttribute("success", "File Upload Successfully");
+//        return "redirect:/drive";
+//    }
 
     @PostMapping("/upload")
     public String fileUpload(@RequestParam("files[]") MultipartFile[] files, Model model) throws IOException {
@@ -80,6 +99,10 @@ public String home(Model model ,@RequestParam(value = "fileId", defaultValue = "
             File uploadFile = new File();
             uploadFile.setFileName(multipartFile.getOriginalFilename());
             System.out.println(multipartFile.getContentType());
+
+            String fileType = extractFileType(multipartFile.getContentType());
+            uploadFile.setFileType(fileType);
+
             try {
                 uploadFile.setContent(multipartFile.getBytes());
             } catch (IOException e) {
@@ -90,6 +113,16 @@ public String home(Model model ,@RequestParam(value = "fileId", defaultValue = "
         });
         model.addAttribute("success", "File Upload Successfully");
         return "redirect:/drive";
+    }
+
+    private String extractFileType(String contentType) {
+        // Extract the file type from the content type string
+        // For example, "image/jpeg" -> "jpeg", "application/pdf" -> "pdf"
+        String[] parts = contentType.split("/");
+        if (parts.length == 2) {
+            return parts[1];
+        }
+        return "";
     }
 
     @GetMapping("/drive/view/{fileId}")
@@ -138,26 +171,25 @@ public String home(Model model ,@RequestParam(value = "fileId", defaultValue = "
     }
 
     @GetMapping("/move{fileId}")
-    public String trashFile(@PathVariable("fileId") long fileId){
+    public String trashFile(@PathVariable("fileId") long fileId) {
         System.out.println("-----");
         fileService.move(fileId);
         return "redirect:/drive";
     }
 
     @GetMapping("/delete{fileId}")
-    public String deleteFile(@PathVariable("fileId") long fileId){
+    public String deleteFile(@PathVariable("fileId") long fileId) {
         System.out.println("-----");
         fileService.delete(fileId);
         return "redirect:/drive";
     }
 
     @PostMapping("/rename{fileId}")
-    public String renameFile(@PathVariable("fileId") long fileId, @RequestParam("name") String name){
-        System.out.println(fileId+" "+name);
+    public String renameFile(@PathVariable("fileId") long fileId, @RequestParam("name") String name) {
+        System.out.println(fileId + " " + name);
         fileService.renameFile(fileId, name);
         return "redirect:/drive";
     }
-
 
 
 }

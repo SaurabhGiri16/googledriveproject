@@ -96,7 +96,7 @@
     #button{
         border-radius: 50px;
         color: #ccc;
-        margin: -40px 0% 0px 67%;
+        margin: -40px 0% 0px 74%;
     }
     #buttons{
         border-radius: 50px;
@@ -206,6 +206,10 @@
     width:25px; height:25px;
     margin:40px 20px 0px 0px;
     }
+    .left-nav-button:hover{
+     border-radius:100px;
+    background-color:#e8e5df;
+    }
 
     </style>
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@3.10.2/dist/fullcalendar.min.css" rel="stylesheet"/>
@@ -284,18 +288,20 @@
             </button>
         </li>
         <br>
-        <li style="margin-left:15px;"><a href="/drive/my-drive"><img th:src="@{/drivemydrive.png}">
+        <li class="left-nav-button" ><a href="/drive/my-drive"><img th:src="@{/drivemydrive.png}">
             <span> My Drive</span></a></li>
-        <li style="margin-left:15px;"><a href="#"><img th:src="@{/group.png}"> Shared with me</a></li>
-        <li style="margin-left:15px;"><a href="#"><img th:src="@{/recent.png}">Recent</a></li>
-        <li style="margin-left:15px;"><a href="#">Starred</a></li>
-        <li style="margin-left:15px;"><a href="#">Spam</a></li>
-        <li style="margin-left:15px;"><a href="/trash"><img th:src="@{/remove.png}"> Trash</a></li>
+        <li class="left-nav-button"><a href="#"><img th:src="@{/group.png}"> Shared with me</a></li>
+        <li class="left-nav-button" ><a href="#"><img th:src="@{/recent.png}">Recent</a></li>
+        <li class="left-nav-button" ><a href="#">Starred</a></li>
+        <li class="left-nav-button" ><a href="#">Spam</a></li>
+        <li class="left-nav-button" ><a href="/trash"><img th:src="@{/remove.png}"> Trash</a></li>
     </ul>
 </div>
 <div id="header">
-    <form id="search-form">
-        <input type="text" placeholder="&#x1F50D;   Search in Drive ">
+    <form id="search-form" action="/drive/my-drive">
+        <input type="text" name="q" placeholder="&#x1F50D;   Search in Drive ">
+        <input type="submit" style="display:none">
+    </form>
         <div id="button">
             <button style="border:none; background-color:transparent;"><img th:src="@{/filter.png}"></button>
         </div>
@@ -304,7 +310,7 @@
             <button style="border:none; background-color:transparent;"><img th:src="@{/setting.png}"></button>
             <button style="border:none; background-color:transparent;"><img th:src="@{/app.png}"></button>
         </div>
-    </form>
+
 </div>
 <div id="fixed-page">
     <div id="calendar"></div>
@@ -339,9 +345,15 @@
 
     <div id="fixed-popup" style="display: none; margin-left: 10px; position:absolute;">
     <span>
-      <form class="dropdown-form">
-        <select class="inner-dropdown">
-            <option> My Drive </option>
+      <form class="dropdown-form" action="/drive/my-drive">
+        <select class="inner-dropdown" name="q" onchange="this.form.submit()">
+            <option> File Type </option>
+            <option value="type:all">All Files</option>
+            <option value="type:image">Photos & Images</option>
+            <option value="type:video"> Videos</option>
+            <option value="type:pdf">PDFs</option>
+            <option value="type:document">Documents</option>
+            <option value="type:zip">Archives(zip)</option>
         </select>
     </form>
     </span>
@@ -353,9 +365,12 @@
     </form>
     </span>
         <span>
-      <form class="dropdown-form">
-        <select class="inner-dropdown">
-            <option> My Drive </option>
+       <form class="dropdown-form" action="/drive/my-drive">
+        <select class="inner-dropdown" name="q" onchange="this.form.submit()">
+            <option> Last modified </option>
+            <option value="today">Today</option>
+            <option value="last-weak">Last 7 days</option>
+            <option value="last-month"> Last 30 days</option>
         </select>
     </form>
     </span>
@@ -366,6 +381,7 @@
         <table>
             <thead>
             <tr>
+
                 <th>Name</th>
                 <th>Owner</th>
                 <th>Last Modified</th>
@@ -375,6 +391,10 @@
             </thead>
             <tbody>
             <tr th:each="file, index : ${allFiles}">
+<!--                <td th:if="${file.fileType == 'png'}" style="width:10px;"><img th:src="@{/img.png}"></td>-->
+<!--                <td th:if="${file.fileType == 'pdf'}"><img th:src="@{/pdf.png}"></td>-->
+<!--                <td th:if="${file.fileType == null}"><img th:src="@{/else.png}"></td>-->
+
                 <td><a th:href="@{/image{fileId}(fileId=${file.id})}"><span th:text="${file.fileName}"
                                                                             style="color:black;"></span></a></td>
                 <td></td>
