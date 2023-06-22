@@ -41,6 +41,7 @@
       padding: 20px;
       padding-right:7px;
     }
+
     #content {
       margin-left: 280px;
       margin-right:55px;
@@ -324,11 +325,6 @@ document.addEventListener('DOMContentLoaded', function() {
             <div class="link-list">
                 <input type="file" name="files[]" multiple><br>
                 <input type="submit" value="Upload Files">
-                <hr>
-                <a href="#">Download</a>
-                <a href="#">Rename</a>
-                <a href="#">Move To Trash</a>
-                <a href="#">Remove</a>
             </div>
         </form>
     </div>
@@ -364,42 +360,55 @@ document.addEventListener('DOMContentLoaded', function() {
         </div>
 
 </div>
+
 <div id="fixed-page">
     <div id="calendar"></div>
     <div th:if="${fileId != ' '}">
         <form id="toggle-forms" class="form-container">
             <div class="link-list">
-                <a href=""><img src="preview.png"> Preview</a>
+                <form th:action="@{/drive/rename{fileId}(fileId=${fileId})}" method="post"><input type="text" name="name"><input type="submit" style="display:none;"> </form>
+                <a th:href="@{/drive/view/{fileId}(fileId=${fileId})}"><img src="preview.png"> Preview</a>
                 <a href="#"><img src="view-details.png"> View Details</a>
-                <a th:href="@{/download{fileId}(fileId=${fileId})}"><img src="download.png"> Download</a>
-                <a href="#"><img src="rename.png"> Rename</a>
-                <a href="#"><img src="trash.png"> Move To Trash/Restore</a>
-                <a href="#"><img src="remove.png"> Remove</a>
-                <a href="/">Reset</a>
+                <a th:href="@{/drive/download{fileId}(fileId=${fileId})}"><img src="download.png"> Download</a>
+<!--                <a th:href="@{/drive/rename{fileId}(fileId=${fileId})}"><img src="rename.png"> Rename</a>-->
+                <a th:href="@{/drive/move{fileId}(fileId=${fileId})}"><img src="trash.png"> Move To Trash/Restore</a>
+                <a th:href="@{/drive/delete{fileId}(fileId=${fileId})}"><img src="remove.png"> Remove</a>
+                <a href="/drive/my-drive">Reset</a>
             </div>
         </form>
     </div>
+    <script>
+        function navigateToLink(selectElement) {
+            var selectedValue = selectElement.value;
+            if (selectedValue !== "") {
+                window.location.href = selectedValue;
+            }
+        }
+    </script>
     <div>
          <span style="display:flex;">
     <form>
-
-    <a href="#" id="list-layout-link">
-        <img th:src="@{/listlayout.png}" alt="List Layout" class="list-layout-image" id="list-layout">
-    </a>
-
-        <select class="dropdown">
-            <option> My Drive </option>
-            <option> My Drive </option>
-            <option> My Drive </option>
-            <option> My Drive </option>
-            <option> My Drive </option>
+         <select id="links" class="dropdown" onchange="navigateToLink(this)">
+            <option value="">My Drive</option>
+            <option value="https://www.example1.com">Google Docs</option>
+            <option value="https://www.example2.com">Google Sheets</option>
+            <option value="https://www.example3.com">Google Slides</option>
+             <option value="https://www.example1.com">Google Forms</option>
+            <option value="https://www.example2.com">Google Drawings</option>
+            <option value="https://www.example3.com">Google My Maps</option>
         </select>
-    </form></span>
-        <span><button onclick="togglePopupFix()" class="dropdown"
-                      style="margin-left: 900px; width:40px; height:40px;"><img
-                th:src="@{/outline_filter.png}"></button></span>
+    </form>
+        <button onclick="togglePopupFix()" class="dropdown"
+                      style="margin-left: 740px; width:40px; height:40px;"><img
+                th:src="@{/outline_filter.png}"></button>
+        <button onclick="togglePopupFix()" class="dropdown"
+                      style="margin-left:10px; width:40px; height:40px;"><img
+                th:src="@{/gridlayout.png}"></button>
+         <a href="#" id="list-layout-link">
+        <img th:src="@{/listlayout.png}" alt="List Layout" id="list-layout" style="margin-left:10px; width:40px; height:40px;">
+    </a>
+         </span>
     </div>
-
     <div id="fixed-popup" style="display: none; margin-left: 10px; position:absolute;">
     <span>
       <form class="dropdown-form" action="/drive/my-drive">
@@ -417,7 +426,10 @@ document.addEventListener('DOMContentLoaded', function() {
         <span>
       <form class="dropdown-form">
         <select class="inner-dropdown">
-            <option> My Drive </option>
+            <optgroup label="People">
+            <option></option>
+
+            <option>Create New User</option>
         </select>
     </form>
     </span>
@@ -434,30 +446,29 @@ document.addEventListener('DOMContentLoaded', function() {
     </div>
 </div>
 
-<div class="image-container">
-    <th:block th:each="file, iterStat : ${allFiles}" th:if="${iterStat.count} &lt;= 6">
-        <div class="image-item" th:if="${file.fileType != null and (file.fileType.equals('png'))}">
-            <a th:href="@{/drive/view/{fileId}(fileId=${file.id})}">
-                <span th:text="${file.fileName}" class="file-name"></span>
-                <img th:src="@{/drive/view/{fileId}(fileId=${file.id})}" class="thumbnail-image" alt="Image">
-            </a>
-        </div>
-        <div class="pdf-item" th:if="${file.fileType != null and file.fileType.equals('pdf')}">
-            <a th:href="@{/drive/view/{fileId}(fileId=${file.id})}">
-                <span th:text="${file.fileName}" class="file-name"></span>
-                <img th:src="@{/drive/pdfthumbnail/{fileId}(fileId=${file.id})}" class="thumbnail-image" alt="PDF Thumbnail">
-            </a>
-        </div>
-    </th:block>
-</div>
-
-<div id="list-layout-content">
 <div id="content">
+    <div id="list-layout-content">
     <div>
+        <p>Suggested</p><br>
+        <div class="image-container">
+            <th:block th:each="file, iterStat : ${allFiles}" th:if="${iterStat.count} &lt;= 4">
+                <div class="image-item" th:if="${file.fileType != null and (file.fileType.equals('png'))}">
+                    <a th:href="@{/drive/view/{fileId}(fileId=${file.id})}">
+                        <span th:text="${file.fileName}" class="file-name"></span>
+                        <img th:src="@{/drive/view/{fileId}(fileId=${file.id})}" class="thumbnail-image" alt="Image">
+                    </a>
+                </div>
+                <div class="pdf-item" th:if="${file.fileType != null and file.fileType.equals('pdf')}">
+                    <a th:href="@{/drive/view/{fileId}(fileId=${file.id})}">
+                        <span th:text="${file.fileName}" class="file-name"></span>
+                        <img th:src="@{/drive/pdfthumbnail/{fileId}(fileId=${file.id})}" class="thumbnail-image" alt="PDF Thumbnail">
+                    </a>
+                </div>
+            </th:block>
+        </div>
         <table>
             <thead>
             <tr>
-
                 <th>Name</th>
                 <th>Owner</th>
                 <th>Last Modified</th>
@@ -467,11 +478,7 @@ document.addEventListener('DOMContentLoaded', function() {
             </thead>
             <tbody>
             <tr th:each="file, index : ${allFiles}">
-<!--                <td th:if="${file.fileType == 'png'}" style="width:10px;"><img th:src="@{/img.png}"></td>-->
-<!--                <td th:if="${file.fileType == 'pdf'}"><img th:src="@{/pdf.png}"></td>-->
-<!--                <td th:if="${file.fileType == null}"><img th:src="@{/else.png}"></td>-->
-
-                <td><a th:href="@{/image{fileId}(fileId=${file.id})}"><span th:text="${file.fileName}"
+                <td><a th:href="@{/drive/view/{fileId}(fileId=${file.id})}"><span th:text="${file.fileName}"
                                                                             style="color:black;"></span></a></td>
                 <td></td>
                 <td th:text="${file.updatedAt}"></td>
@@ -488,40 +495,33 @@ document.addEventListener('DOMContentLoaded', function() {
         </table>
     </div>
 </div>
-</div>
-
-<div id="grid-layout-content">
-    <div class="image-container">
-        <th:block th:each="file : ${allFiles}">
-            <div class="image-item" th:if="${file.fileType != null and (file.fileType.equals('png'))}">
-                <a th:href="@{/drive/view/{fileId}(fileId=${file.id})}">
-                    <span th:text="${file.fileName}" class="file-name"></span>
-                    <img th:src="@{/drive/view/{fileId}(fileId=${file.id})}" class="thumbnail-image" alt="Image">
-                </a>
-            </div>
-            <div class="pdf-item" th:if="${file.fileType != null and file.fileType.equals('pdf')}">
-                <a th:href="@{/drive/view/{fileId}(fileId=${file.id})}">
-                    <span th:text="${file.fileName}" class="file-name"></span>
-                    <img th:src="@{/drive/pdfthumbnail/{fileId}(fileId=${file.id})}" class="thumbnail-image" alt="PDF Thumbnail">
-                </a>
-            </div>
-        </th:block>
+    <div id="grid-layout-content">
+        <div class="image-container">
+            <th:block th:each="file : ${allFiles}">
+                <div class="image-item" th:if="${file.fileType != null and (file.fileType.equals('png'))}">
+                    <a th:href="@{/drive/view/{fileId}(fileId=${file.id})}">
+                        <span th:text="${file.fileName}" class="file-name"></span>
+                        <img th:src="@{/drive/view/{fileId}(fileId=${file.id})}" class="thumbnail-image" alt="Image">
+                    </a>
+                </div>
+                <div class="pdf-item" th:if="${file.fileType != null and file.fileType.equals('pdf')}">
+                    <a th:href="@{/drive/view/{fileId}(fileId=${file.id})}">
+                        <span th:text="${file.fileName}" class="file-name"></span>
+                        <img th:src="@{/drive/pdfthumbnail/{fileId}(fileId=${file.id})}" class="thumbnail-image" alt="PDF Thumbnail">
+                    </a>
+                </div>
+            </th:block>
+        </div>
     </div>
 </div>
-
 <div id="navigation-right">
-    <button id="showCalendarButton" style="border:none; background-color:transparent;"><img th:src="@{/calender.png}"
-                                                                                            alt="calender"
-                                                                                            id="calender-logo"></button>
-    <button style="border:none; background-color:transparent;"><img th:src="@{/keep.png}" alt="keep"
-                                                                    class="right-side-logo"></button>
-    <button style="border:none; background-color:transparent;"><img th:src="@{/task.png}" alt="tasks"
-                                                                    class="right-side-logo"></button>
-    <button style="border:none; background-color:transparent;"><img th:src="@{/peoples.png}" alt="contacts"
-                                                                    class="right-side-logo"></button>
+    <form th:action ="@{/logout}" method="post"><button type="submit">O</button></form>
+    <button id="showCalendarButton" style="border:none; background-color:transparent;"><img th:src="@{/calender.png}" alt="calender" id="calender-logo"></button>
+    <button style="border:none; background-color:transparent;"><img th:src="@{/keep.png}" alt="keep" class="right-side-logo"></button>
+    <button style="border:none; background-color:transparent;"><img th:src="@{/task.png}" alt="tasks" class="right-side-logo"></button>
+    <button style="border:none; background-color:transparent;"><img th:src="@{/peoples.png}" alt="contacts" class="right-side-logo"></button>
     <a href="https://workspace.google.com/u/0/marketplace/appfinder?host=drive">
-        <button style="border:none; background-color:transparent;"><img th:src="@{/new.png}" alt="add icons"
-                                                                        class="right-side-logo"></button>
+        <button style="border:none; background-color:transparent;"><img th:src="@{/new.png}" alt="add icons" class="right-side-logo"></button>
     </a>
 </div>
 </body>

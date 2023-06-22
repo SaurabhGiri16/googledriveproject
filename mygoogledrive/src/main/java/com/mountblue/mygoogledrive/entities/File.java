@@ -1,10 +1,15 @@
 package com.mountblue.mygoogledrive.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
+
+
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
 
@@ -15,6 +20,8 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 public class File {
+
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -24,8 +31,12 @@ public class File {
     private boolean isTrashed;
     private LocalDate createdAt;
     private LocalDate updatedAt;
-
     private String fileType;
+    private String userName;
+
+//    @ManyToOne
+//    @JoinColumn(name = "user_id")
+//    private User user;
 
     @PrePersist
     public void prePersist() {
