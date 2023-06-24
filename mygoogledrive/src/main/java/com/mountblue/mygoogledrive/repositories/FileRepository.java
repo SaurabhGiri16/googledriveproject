@@ -18,4 +18,15 @@ public interface FileRepository extends JpaRepository<File, Long> {
 
     @Query("SELECT e FROM File e WHERE e.updatedAt >= :specificDate")
     List<File> getDataOnOrAfterUpdatedAt(LocalDate specificDate);
+
+    List<File> findAllByIsTrashedFalseAndUserName(String name);
+
+    List<File> findByFileNameContainingAndUserName(String substring, String name);
+
+    List<File> findByFileTypeInAndUserName(List<String> fileTypes, String name);
+
+    List<File> findByIsTrashedTrueAndUserName(String name);
+
+    @Query("SELECT e FROM File e WHERE e.updatedAt >= :specificDate AND e.userName = :userName")
+    List<File> getDataOnOrAfterUpdatedAtAndUserName(LocalDate specificDate, String userName);
 }

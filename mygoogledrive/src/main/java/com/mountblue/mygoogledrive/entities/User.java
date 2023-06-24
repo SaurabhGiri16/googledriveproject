@@ -7,9 +7,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Entity
-@Table(name="users")
+@Table(name = "users")
 @Setter
 @Getter
 @AllArgsConstructor
@@ -22,8 +23,8 @@ public class User {
     private String emailId;
     private String password;
 
-//    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-//    private ArrayList<File> files = new ArrayList<>();
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<File> files = new ArrayList<>();
 
 //    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 //    private ArrayList<Contact>  contacts = new ArrayList<>();

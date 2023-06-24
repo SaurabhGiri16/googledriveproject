@@ -18,8 +18,4 @@ public class Note {
     @Column(columnDefinition = "varchar(3500)")
     private String note;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
-
 }

@@ -34,9 +34,9 @@ public class File {
     private String fileType;
     private String userName;
 
-//    @ManyToOne
-//    @JoinColumn(name = "user_id")
-//    private User user;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @PrePersist
     public void prePersist() {
@@ -47,4 +47,6 @@ public class File {
     public boolean getTrashed(){
         return this.isTrashed;
     }
+
+
 }

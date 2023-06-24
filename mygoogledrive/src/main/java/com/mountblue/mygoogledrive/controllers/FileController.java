@@ -17,6 +17,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,6 +33,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.springframework.util.MimeTypeUtils;
+
+
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 @Controller
 public class FileController {
     @Autowired
@@ -44,10 +53,12 @@ public class FileController {
 
     private Logger logger = LoggerFactory.getLogger(java.io.File.class);
 
-    @GetMapping({"/", "/drive", "/drive/my-drive"})
-    public String home(Model model, @RequestParam(value = "fileId", defaultValue = " ", required = false) String fileId,
+
+    @GetMapping({"/","/drive", "/drive/my-drive"})
+    public String home(Authentication authentication, Model model, @RequestParam(value = "fileId", defaultValue = " ", required = false) String fileId,
                        @RequestParam(value = "q", defaultValue = "", required = false) String q) {
-        List<File> allFiles = fileService.getAllFiles(q);
+        String name = authentication.getName();
+        List<File> allFiles = fileService.getAllFiles(q, name);
         List<String> formattedSizes = new ArrayList<>();
 
         for (File file : allFiles) {
@@ -69,9 +80,10 @@ public class FileController {
         }
     }
 
-    @GetMapping("/trash")
-    public String trash(Model model, @RequestParam(value = "fileId", defaultValue = " ", required = false) String fileId) {
-        List<File> allFiles = fileService.getTrashedFiles();
+    @GetMapping("/drive/trash")
+    public String trash(Authentication authentication ,Model model, @RequestParam(value = "fileId", defaultValue = " ", required = false) String fileId) {
+        String name = authentication.getName();
+        List<File> allFiles = fileService.getTrashedFiles(name);
         List<String> formattedSizes = new ArrayList<>();
 
         for (File file : allFiles) {
@@ -84,10 +96,28 @@ public class FileController {
         return "home";
     }
 
-    @PostMapping("/upload")
-    public String fileUpload(@RequestParam("files[]") MultipartFile[] files, Model model) throws IOException {
+    @GetMapping("/drive/recent")
+    public String recent(Authentication authentication ,Model model, @RequestParam(value = "fileId", defaultValue = " ", required = false) String fileId) {
+        String name = authentication.getName();
+        List<File> allFiles = fileService.getRecentFiles(name);
+        List<String> formattedSizes = new ArrayList<>();
+
+        for (File file : allFiles) {
+            formattedSizes.add(formatFileSize(file.getSize()));
+        }
+        model.addAttribute("fileId", fileId);
+        model.addAttribute("allFiles", allFiles);
+        model.addAttribute("formattedSizes", formattedSizes);
+
+        return "home";
+    }
+
+    @PostMapping("/drive/upload")
+    public String fileUpload(@RequestParam("name") String name,@RequestParam("files[]") MultipartFile[] files, Model model) throws IOException {
+        System.out.println(name);
         Arrays.stream(files).forEach(multipartFile -> {
             File uploadFile = new File();
+            uploadFile.setUserName(name);
             uploadFile.setFileName(multipartFile.getOriginalFilename());
             System.out.println(multipartFile.getContentType());
 
@@ -115,6 +145,7 @@ public class FileController {
     }
 
     @GetMapping("/drive/view/{fileId}")
+    @PreAuthorize("authentication.name == @fileService.getFileByFileId(#fileId).getUserName()")
     public ResponseEntity<Resource> viewFile(@PathVariable("fileId") Long fileId) {
         File file = fileService.findFileByFileId(fileId);
         String fileExtension = FilenameUtils.getExtension(file.getFileName());
@@ -131,12 +162,49 @@ public class FileController {
             return "image/png";
         } else if (extension.equalsIgnoreCase("pdf")) {
             return "application/pdf";
-        } else if (extension.equalsIgnoreCase("mp4")) {
+        }  else if (extension.equalsIgnoreCase("webm")){
             return "video/mp4";
+        } else if (extension.equalsIgnoreCase("gif")) {
+            return MimeTypeUtils.IMAGE_GIF_VALUE;
+        }  else if (extension.equalsIgnoreCase("doc") || extension.equalsIgnoreCase("docx")) {
+            return "application/msword";
+        } else if (extension.equalsIgnoreCase("xls") || extension.equalsIgnoreCase("xlsx")) {
+            return "application/vnd.ms-excel";
+        } else if (extension.equalsIgnoreCase("ppt") || extension.equalsIgnoreCase("pptx")) {
+            return "application/vnd.ms-powerpoint";
+        } else if (extension.equalsIgnoreCase("mp4") || extension.equalsIgnoreCase("m4v") ||
+                extension.equalsIgnoreCase("mov") || extension.equalsIgnoreCase("avi") ||
+                extension.equalsIgnoreCase("mkv")) {
+            return "video/" + extension;
+        } else if (extension.equalsIgnoreCase("html") || extension.equalsIgnoreCase("htm")) {
+            return "text/html";
+        } else if (extension.equalsIgnoreCase("css")) {
+            return "text/css";
+        } else if (extension.equalsIgnoreCase("js")) {
+            return "application/javascript";
+        } else if (extension.equalsIgnoreCase("txt")) {
+            return "text/plain";
+        } else if (extension.equalsIgnoreCase("csv")) {
+            return "text/csv";
+        } else if (extension.equalsIgnoreCase("xml")) {
+            return "application/xml";
+        } else if (extension.equalsIgnoreCase("json")) {
+            return "application/json";
+        } else if (extension.equalsIgnoreCase("mp3")) {
+            return "audio/mpeg";
+        } else if (extension.equalsIgnoreCase("wav")) {
+            return "audio/wav";
+        } else if (extension.equalsIgnoreCase("zip")) {
+            return "application/zip";
+        } else {
+            // Default MIME type for unknown file types
+            return MediaType.APPLICATION_OCTET_STREAM_VALUE;
         }
-        return null;
     }
+
+
     @GetMapping("/drive/pdfthumbnail/{fileId}")
+    @PreAuthorize("authentication.name == @fileService.getFileByFileId(#fileId).getUserName()")
     public ResponseEntity<Resource> getPdfThumbnail(@PathVariable("fileId") Long fileId) throws IOException {
         File file = fileService.findFileByFileId(fileId);
 
@@ -149,7 +217,8 @@ public class FileController {
         return new ResponseEntity<>(resource, headers, HttpStatus.OK);
     }
 
-    @GetMapping("/drive/preview{fileId}")
+    @GetMapping("/drive/preview/{fileId}")
+    @PreAuthorize("authentication.name == @fileService.getFileByFileId(#fileId).getUserName()")
     public void downloadFile(@PathVariable("fileId") Long fileId, Model model, HttpServletResponse response) throws IOException {
         File file = fileService.findFileByFileId(fileId);
         if (file != null) {
@@ -164,6 +233,7 @@ public class FileController {
     }
 
     @GetMapping("/drive/download{fileId}")
+    @PreAuthorize("authentication.name == @fileService.getFileByFileId(#fileId).getUserName()")
     public void showImage(@PathVariable("fileId") Long fileId, HttpServletResponse response, File file) throws IOException {
         file = fileService.findFileByFileId(fileId);
         response.setContentType("image/jpeg, image/jpg, image/png, image/gif, image/pdf");
@@ -172,22 +242,22 @@ public class FileController {
     }
 
     @GetMapping("/drive/move{fileId}")
+    @PreAuthorize("authentication.name == @fileService.getFileByFileId(#fileId).getUserName()")
     public String trashFile(@PathVariable("fileId") long fileId) {
-        System.out.println("-----");
         fileService.move(fileId);
         return "redirect:/drive";
     }
 
     @GetMapping("/drive/delete{fileId}")
+    @PreAuthorize("authentication.name == @fileService.getFileByFileId(#fileId).getUserName()")
     public String deleteFile(@PathVariable("fileId") long fileId) {
-        System.out.println("-----");
         fileService.delete(fileId);
         return "redirect:/drive";
     }
 
     @PostMapping("/drive/rename{fileId}")
+    @PreAuthorize("authentication.name == @fileService.getFileByFileId(#fileId).getUserName()")
     public String renameFile(@PathVariable("fileId") long fileId, @RequestParam("name") String name) {
-        System.out.println(fileId + " " + name);
         fileService.renameFile(fileId, name);
         return "redirect:/drive";
     }
