@@ -1,15 +1,10 @@
 package com.mountblue.mygoogledrive.entities;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
-
-
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
 

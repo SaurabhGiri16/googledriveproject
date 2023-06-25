@@ -431,7 +431,7 @@ function showNotepad() {
     <div id="notepad">
         <h1>Notepad</h1>
         <form th:action="@{/drive/save-note}" method="post">
-            <div><textarea class="notepad" name="note" required></textarea></div>
+            <div><textarea type="text" class="notepad" name="note" required></textarea></div>
             <button type="submit" value="save note">Save Note</button>
         </form>
         <form th:action="@{/drive/my-notes}" method="POST">
@@ -554,7 +554,7 @@ function showNotepad() {
                     <div class="pdf-item" th:if="${file.fileType != null and file.fileType.equals('pdf')}">
                         <a th:href="@{/drive/view/{fileId}(fileId=${file.id})}">
                             <span th:text="${file.fileName}" class="file-name"></span>
-                            <img th:src="@{/drive/pdfthumbnail/{fileId}(fileId=${file.id})}" class="thumbnail-image"
+                            <img th:src="@{/drive/pdf-thumbnail/{fileId}(fileId=${file.id})}" class="thumbnail-image"
                                  alt="PDF Thumbnail">
                         </a>
                     </div>
@@ -596,7 +596,7 @@ function showNotepad() {
         <p>Suggested</p><br>
         <div class="image-container">
             <th:block th:each="file : ${allFiles}">
-                <div class="image-item" th:if="${file.fileType != null and (file.fileType.equals('png'))}">
+                <div class="image-item" th:if="${file.fileType != null and (file.fileType.equals('png') || file.fileType.equals('jpg') || file.fileType.equals('jpeg') )}">
                     <a th:href="@{/drive/view/{fileId}(fileId=${file.id})}">
                         <span th:text="${file.fileName}" class="file-name"></span>
                         <img th:src="@{/drive/view/{fileId}(fileId=${file.id})}" class="thumbnail-image" alt="Image">
@@ -605,7 +605,7 @@ function showNotepad() {
                 <div class="pdf-item" th:if="${file.fileType != null and file.fileType.equals('pdf')}">
                     <a th:href="@{/drive/view/{fileId}(fileId=${file.id})}">
                         <span th:text="${file.fileName}" class="file-name"></span>
-                        <img th:src="@{/drive/pdfthumbnail/{fileId}(fileId=${file.id})}" class="thumbnail-image"
+                        <img th:src="@{/drive/pdf-thumbnail/{fileId}(fileId=${file.id})}" class="thumbnail-image"
                              alt="PDF Thumbnail">
                     </a>
                 </div>
@@ -623,8 +623,7 @@ function showNotepad() {
     <button style="border:none; background-color:transparent;"><img th:src="@{/keep.png}" alt="keep"
                                                                     class="right-side-logo" onclick="showNotepad()">
     </button>
-    <button style="border:none; background-color:transparent;"><img th:src="@{/task.png}" alt="tasks"
-                                                                    class="right-side-logo"></button>
+<!--    <button style="border:none; background-color:transparent;"><img th:src="@{/task.png}" alt="tasks" class="right-side-logo"></button>-->
     <button style="border:none; background-color:transparent;"><img th:src="@{/peoples.png}" alt="contacts"
                                                                     class="right-side-logo" onclick="showPopup()">
     </button>
@@ -633,13 +632,15 @@ function showNotepad() {
                                                                         class="right-side-logo"></button>
     </a>
 </div>
-<div id="popup" class="popup" style="display:none; background-color:white;"><span><form><h3 class="center">Contacts</h3><input type="search" placeholder="&#x1F50D;   Search in Contacts "><input type="submit" value="Search By name"></form></span>
+<div id="popup" class="popup" style="display:none; background-color:#C5E6F9; height:300px; overflow: auto;"><span>
+    <form ><h3 class="center">Contacts</h3><input type="search" placeholder="&#x1F50D;   Search in Contacts ">
+        <input type="submit" value="Search By name"></form></span>
     <div class="popup-content">
         <table>
             <thead>
             <tr>
-                <form th:action="@{/drive/create-contact}" th:method="post"><input type="text" required placeholder="Name"><input type="number" minlength="10" maxlength="12"
-                                                                            required placeholder="Contact Number"><input
+                <form th:action="@{/drive/create-contact}" th:method="post"><input type="text" required placeholder="Name" name="c-name"><input type="number" minlength="10" maxlength="12"
+                                                                            name="c-number" required placeholder="Contact Number"><input
                         type="submit" value="Create Contact"></form>
             </tr>
             <tr>
@@ -648,13 +649,9 @@ function showNotepad() {
             </tr>
             </thead>
             <tbody>
-            <tr>
-                <td>Data 1</td>
-                <td>Data 2</td>
-            </tr>
-            <tr>
-                <td>Data 4</td>
-                <td>Data 5</td>
+            <tr th:each="var : ${contacts}">
+                <td th:text="${var.name}"></td>
+                <td th:text="${var.contactNumber}"></td>
             </tr>
             </tbody>
         </table>

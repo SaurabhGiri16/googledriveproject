@@ -1,6 +1,8 @@
 package com.mountblue.mygoogledrive.controllers;
 
+import com.mountblue.mygoogledrive.entities.Contact;
 import com.mountblue.mygoogledrive.entities.File;
+import com.mountblue.mygoogledrive.services.ContactService;
 import com.mountblue.mygoogledrive.services.FileService;
 import com.mountblue.mygoogledrive.services.UserService;
 import com.mountblue.mygoogledrive.services.ThumbnailService;
@@ -50,6 +52,8 @@ public class FileController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private ContactService contactService;
 
     private Logger logger = LoggerFactory.getLogger(java.io.File.class);
 
@@ -67,6 +71,9 @@ public class FileController {
         model.addAttribute("fileId", fileId);
         model.addAttribute("allFiles", allFiles);
         model.addAttribute("formattedSizes", formattedSizes);
+
+        List<Contact> contacts = contactService.showContacts(authentication);
+        model.addAttribute("contacts",contacts);
         return "home";
     }
 
@@ -203,7 +210,7 @@ public class FileController {
     }
 
 
-    @GetMapping("/drive/pdfthumbnail/{fileId}")
+    @GetMapping("/drive/pdf-thumbnail/{fileId}")
     @PreAuthorize("authentication.name == @fileService.getFileByFileId(#fileId).getUserName()")
     public ResponseEntity<Resource> getPdfThumbnail(@PathVariable("fileId") Long fileId) throws IOException {
         File file = fileService.findFileByFileId(fileId);
