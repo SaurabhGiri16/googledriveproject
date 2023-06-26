@@ -29,12 +29,5 @@ public class ContactController {
             return "redirect:/drive";
     }
 
-//    @PostMapping("/drive/show-contacts")
-//    @PreAuthorize("authentication.name == authentication.name")
-//    public String showContacts(Authentication authentication, Model model){
-//        List<Contact> contacts = contactService.showContacts(authentication);
-//        model.addAttribute("contacts",contacts);
-//        return "redirect:/drive";
-//    }
 
 }

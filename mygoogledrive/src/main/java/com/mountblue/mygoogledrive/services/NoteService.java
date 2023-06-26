@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class NoteService {
 
@@ -16,5 +18,9 @@ public class NoteService {
         newNote.setNote(note);
         newNote.setUserName(authentication.getName());
         noteRepository.save(newNote);
+    }
+
+    public List<Note> showNotes(Authentication authentication) {
+        return noteRepository.findAllByUserName(authentication.getName());
     }
 }
