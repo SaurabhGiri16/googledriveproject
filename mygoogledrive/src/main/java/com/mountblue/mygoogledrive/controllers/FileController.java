@@ -2,6 +2,7 @@ package com.mountblue.mygoogledrive.controllers;
 
 import com.mountblue.mygoogledrive.entities.Contact;
 import com.mountblue.mygoogledrive.entities.File;
+import com.mountblue.mygoogledrive.entities.User;
 import com.mountblue.mygoogledrive.services.ContactService;
 import com.mountblue.mygoogledrive.services.FileService;
 import com.mountblue.mygoogledrive.services.UserService;
@@ -31,16 +32,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.util.MimeTypeUtils;
 
-
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 @Controller
 public class FileController {
@@ -60,20 +58,24 @@ public class FileController {
 
     @GetMapping({"/","/drive", "/drive/my-drive"})
     public String home(Authentication authentication, Model model, @RequestParam(value = "fileId", defaultValue = " ", required = false) String fileId,
-                       @RequestParam(value = "q", defaultValue = "", required = false) String q) {
+                       @RequestParam(value = "q", defaultValue = "", required = false) String q,
+                       @RequestParam(value = "q1", defaultValue = "", required = false) String q1,
+                       @RequestParam(value = "q2", defaultValue = "", required = false) LocalDate q2,
+                       @RequestParam(value = "q3", defaultValue = "", required = false) String q3) {
         String name = authentication.getName();
+
         List<File> allFiles = fileService.getAllFiles(q, name);
         List<String> formattedSizes = new ArrayList<>();
-
+        List<Contact> contacts = contactService.showContacts(authentication);
+        List<User> users = userService.showUsers();
         for (File file : allFiles) {
             formattedSizes.add(formatFileSize(file.getSize()));
         }
         model.addAttribute("fileId", fileId);
         model.addAttribute("allFiles", allFiles);
         model.addAttribute("formattedSizes", formattedSizes);
-
-        List<Contact> contacts = contactService.showContacts(authentication);
         model.addAttribute("contacts",contacts);
+        model.addAttribute("users",users);
         return "home";
     }
 
@@ -268,6 +270,5 @@ public class FileController {
         fileService.renameFile(fileId, name);
         return "redirect:/drive";
     }
-
 
 }

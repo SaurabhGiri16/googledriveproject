@@ -9,4 +9,6 @@ import java.util.List;
 @Repository
 public interface ContactRepository extends JpaRepository<Contact, Integer> {
     List<Contact> findAllByUserName(String name);
+
+    List<Contact> findAllByNameIgnoreCaseContainingAndUserName(String search, String name);
 }

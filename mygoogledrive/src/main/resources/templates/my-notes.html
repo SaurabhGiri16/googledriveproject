@@ -11,6 +11,12 @@
   <p th:text="${var.note}"></p>
 
 </div>
+<div th:each="var : ${contacts}">
+    <h2 th:text="${var.name}">:</h2>
+    <p th:text="${var.contactNumber}"></p>
+
+</div>
+
 
 </body>
 </html>

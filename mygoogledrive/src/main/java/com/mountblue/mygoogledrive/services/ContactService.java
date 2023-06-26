@@ -26,4 +26,8 @@ public class ContactService {
         String name= authentication.getName();
         return contactRepository.findAllByUserName(name);
     }
+
+    public List<Contact> findContact(String name,String search) {
+        return contactRepository.findAllByNameIgnoreCaseContainingAndUserName(search, name);
+    }
 }

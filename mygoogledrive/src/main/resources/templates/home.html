@@ -534,27 +534,26 @@ background-color: #f3fafa;
   margin-left:48%;
   width: 180px;
   background-color:honeydew; display:none; position:absolute;">
-        <form>
-            <label for="field1">
+        <form th:action="@{/drive}">
                 <h5>Filter By File Type</h5>
             </label>
-            <select name="field1[]" id="field1" multiple>
-                <option value="option1">Option 1</option>
-                <option value="option2">Option 2
-                <option value="option3">Option 3</option>
+            <select name="q1" id="field1" >
+                <option value="image">Photos & Images</option>
+                <option value="video"> Videos</option>
+                <option value="pdf">PDFs</option>
+                <option value="document">Documents</option>
+                <option value="zip">Archives(zip)</option>
             </select><br>
-            <label for="field2">
                 <h5>Filter By Date</h5>
             </label>
-            <select name="field2[]" id="field2" multiple>
-                <option value="option4">Option 4</option>
-                <option value="option5">Option 5</option>
-                <option value="option6">Option 6</option>
+            <select name="q2" id="field2" >
+                <option value="today">Today</option>
+                <option value="last-weak">Last 7 days</option>
+                <option value="last-month"> Last 30 days</option>
             </select><br>
-            <label for="field3">
                 <h5>Filter By Name</h5>
             </label>
-            <input type="text" name="field3" id="field3" placeholder="search"><br><br>
+            <input type="text" name="q3" id="field3" placeholder="search"><br><br>
             <input type="submit" value="Submit">
         </form>
     </div>
@@ -631,10 +630,10 @@ background-color: #f3fafa;
         <span>
         <form class="dropdown-form">
           <select class="inner-dropdown" onchange="navigateToLink(this)">
-            <optgroup label="People">
-              <option value="">People</option>
-              <option value="http://localhost:9999/login">Log In</option>
-              <option value="http://localhost:9999/register">Create New User</option>
+            <optgroup label="People"><option value="">People</option>
+                <div th:each="var : ${users}">
+              <option th:value="@{http://localhost:9999/login}" th:text="${var.userName}"></option>
+              </div>
           </select>
         </form>
       </span>
@@ -735,7 +734,6 @@ background-color: #f3fafa;
     <button style="border:none; background-color:transparent;"><img th:src="@{/keep.png}" alt="keep"
                                                                     class="right-side-logo" onclick="showNotepad()">
     </button>
-    <!--    <button style="border:none; background-color:transparent;"><img th:src="@{/task.png}" alt="tasks" class="right-side-logo"></button>-->
     <button style="border:none; background-color:transparent;"><img th:src="@{/peoples.png}" alt="contacts"
                                                                     class="right-side-logo" onclick="showPopup()">
     </button>
@@ -745,8 +743,8 @@ background-color: #f3fafa;
     </a>
 </div>
 <div id="popup" class="popup" style="display:none; background-color:#C5E6F9; height:300px; overflow: auto;"><span>
-      <form>
-        <h3 class="center">Contacts</h3><input type="search" placeholder="&#x1F50D;   Search in Contacts ">
+      <form th:action="@{/drive/search}" th:method="post">
+        <h3 class="center">Contacts</h3><input type="search" name="search" placeholder="&#x1F50D;   Search in Contacts ">
         <input type="submit" value="Search By name">
       </form>
     </span>

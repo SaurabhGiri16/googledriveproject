@@ -29,5 +29,12 @@ public class ContactController {
             return "redirect:/drive";
     }
 
+    @PostMapping("/drive/search")
+    @PreAuthorize("authentication.name == authentication.name")
+    public String searchContact(Model model, @RequestParam("search") String search, Authentication authentication){
+        List<Contact> contacts= contactService.findContact(authentication.getName(),search);
+        model.addAttribute("contacts",contacts);
+        return "my-notes";
+    }
 
 }
