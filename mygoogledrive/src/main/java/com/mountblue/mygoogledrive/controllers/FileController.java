@@ -167,7 +167,7 @@ public class FileController {
     }
 
     private String getMimeTypeFromExtension(String extension) {
-        if (extension.equalsIgnoreCase("png")) {
+        if (extension.equalsIgnoreCase("png") ||extension.equalsIgnoreCase("jpg")   ||extension.equalsIgnoreCase("jpeg")  ) {
             return "image/png";
         } else if (extension.equalsIgnoreCase("pdf")) {
             return "application/pdf";
