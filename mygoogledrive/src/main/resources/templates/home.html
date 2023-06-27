@@ -462,7 +462,7 @@ background-color: #f3fafa;
 
 <body>
 <div id="navigation">
-    <span><img th:src="@{/mydrive.png}" style="height: 50px; height:60px;"></span>
+    <span><a th:href="@{/drive}"></a><img th:src="@{/mydrive.png}" style="height: 50px; height:60px;"></span>
     <div id="myPopup" class="form-container">
         <form th:action="@{/drive/upload}" th:method="post" enctype="multipart/form-data">
             <div class="link-list">
@@ -520,7 +520,7 @@ background-color: #f3fafa;
         <form th:action="@{/drive/rename{fileId}(fileId=${fileId})}" method="post" id="toggle-forms"
               class="form-container">
             <div class="link-list">
-                <div><input type="text" name="name"><input type="submit"></div>
+                <div><input type="text" name="name" required value="Rename(Without Extention)"><input type="submit" value="Rename"></div>
                 <a th:href="@{/drive/view/{fileId}(fileId=${fileId})}"><img src="preview.png"> Preview</a>
                 <a th:href="@{/drive/download{fileId}(fileId=${fileId})}"><img src="download.png"> Download</a>
                 <a th:href="@{/drive/move{fileId}(fileId=${fileId})}"><img src="trash.png"> Move To Trash/Restore</a>
